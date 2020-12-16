@@ -3,49 +3,49 @@ name: Release
 on:
   push:
     branches:
-      - da/arm64
+      - master
 
 jobs:
-  # release:
-  #   name: Release
+  release:
+    name: Release
 
-  #   runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-  #     - name: Get version before
-  #       run: echo VERSION_BEFORE=$(curl -s https://api.github.com/repos/supabase/realtime/releases/latest | jq .name -r) >> $GITHUB_ENV
+      - name: Get version before
+        run: echo VERSION_BEFORE=$(curl -s https://api.github.com/repos/supabase/realtime/releases/latest | jq .name -r) >> $GITHUB_ENV
 
-  #     - name: Release on GitHub
-  #       run: npx semantic-release -p        \
-  #         @semantic-release/commit-analyzer \
-  #         @semantic-release/github          \
-  #         @semantic-release/release-notes-generator
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release on GitHub
+        run: npx semantic-release -p        \
+          @semantic-release/commit-analyzer \
+          @semantic-release/github          \
+          @semantic-release/release-notes-generator
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  #     - name: Get version after
-  #       run: echo VERSION_AFTER=$(curl -s https://api.github.com/repos/supabase/realtime/releases/latest | jq .name -r) >> $GITHUB_ENV
+      - name: Get version after
+        run: echo VERSION_AFTER=$(curl -s https://api.github.com/repos/supabase/realtime/releases/latest | jq .name -r) >> $GITHUB_ENV
 
-  #     - name: Check version difference
-  #       run: |
-  #         if [ ${{ env.VERSION_BEFORE }} = ${{ env.VERSION_AFTER }} ]; then
-  #           echo 0 > has-new-release
-  #         else
-  #           echo 1 > has-new-release
-  #         fi
+      - name: Check version difference
+        run: |
+          if [ ${{ env.VERSION_BEFORE }} = ${{ env.VERSION_AFTER }} ]; then
+            echo 0 > has-new-release
+          else
+            echo 1 > has-new-release
+          fi
 
-  #     - uses: actions/upload-artifact@v1
-  #       with:
-  #         name: has-new-release
-  #         path: has-new-release
+      - uses: actions/upload-artifact@v1
+        with:
+          name: has-new-release
+          path: has-new-release
 
   upload:
     name: Upload / Elixir ${{ matrix.elixir }} / OTP ${{ matrix.otp }}
 
-    # needs:
-    #   - release
+    needs:
+      - release
 
     strategy:
       matrix:
@@ -123,8 +123,8 @@ jobs:
   upload-docker-image:
     name: Upload Docker image
 
-    # needs:
-    #   - release
+    needs:
+      - release
 
     runs-on: ubuntu-latest
 
